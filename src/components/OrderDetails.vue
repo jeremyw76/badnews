@@ -81,7 +81,7 @@ export default {
       let result = 0
 
       this.items.forEach(item => {
-        result += item.numericPrice
+        result += (item.numericPrice * item.quantity)
       })
 
       return result / 100
