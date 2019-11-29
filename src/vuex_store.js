@@ -33,6 +33,11 @@ export default {
       cart: {
         items: []
       },
+      pagination: {
+        pages: 1,
+        per_page: 10,
+        current_page: 1
+      },
       previousPage: '/',
       images: [],
       page: 0,
@@ -177,6 +182,9 @@ export default {
           let knownIds = state.images.map(image => image.id)
           let unknownImages = response.data.images.filter(image => !knownIds.includes(image.id))
           state.images = [...state.images, ...unknownImages]
+          state.pagination.current_page = response.data.page
+          state.pagination.per_page = response.data.per_page
+          state.pagination.pages = response.date.pages
         })
         .catch(error => {
           state.errors.connectionError = error
