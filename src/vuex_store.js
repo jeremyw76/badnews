@@ -147,6 +147,17 @@ export default {
         postalCode: address.postal_code
         }
       },
+      setImages(state, images)
+      {
+        state.images = images
+      },
+      setCurrentPage(state, index)
+      {
+        if (state.pagination.current_page != index) {
+          state.pagination.current_page = index
+          this.dispatch('loadImages')
+        }
+      },
       stripeSuccess (response) {
         console.log('Stripe Success!!')
       },
@@ -168,29 +179,66 @@ export default {
         postToCartUpdate(state, {})
       },
       loadInitialData({ commit, state }) {
-        plainAxiosInstance.get('/users.json')
+        commit('clearStore')
+        plainAxiosInstance.get('sessions/new.json')
           .then(response => {
-            commit('logInUser', response.data.customer)
-
             if (response.data.cart) {
               response.data.cart.forEach(item => {
                 commit('addToCart', item)
               })
             }
+            if (response.data.pagination) {
+              this.state.pagination.per_page = response.data.pagination.per_page
+              this.state.pagination.pages = response.data.pagination.pages
+              this.state.pagination.page = 2
+            }
 
-            postToCartUpdate(state, error => {})
+            let session = response.data.session
+            if (session === undefined) return
+
+            if (session.customer) {
+              this.commit('logInUser', response.data.session.customer)
+            }
+
+            if (session.cart) {
+              session.cart.forEach(item => {
+                this.state.cart.items.push({
+                  type: item.type,
+                  id: item.id,
+                  qty: item.quantity
+                })
+              })
+            }
+          }).catch(error => {
+            state.errors.connectionError = 'Unable to connect.'
           })
-          .catch(error => console.log(error))
       },
-      loadImages({ commit, state}) {
-        plainAxiosInstance.get('/photos', { page: state.page, count: state.count })
+      loadImages({ commit, state }) {
+        plainAxiosInstance.get('/photos', {
+          params: {
+            page: state.pagination.current_page,
+            per_page: state.pagination.per_page
+          }
+        })
         .then(response => {
           let knownIds = state.images.map(image => image.id)
           let unknownImages = response.data.images.filter(image => !knownIds.includes(image.id))
-          state.images = [...state.images, ...unknownImages]
+          commit('setImages', response.data.images)
           state.pagination.current_page = response.data.page
           state.pagination.per_page = response.data.per_page
           state.pagination.pages = response.date.pages
+        })
+        .catch(error => {
+          state.errors.connectionError = error
+        })
+      },
+      retrieveCartImages({ commit, state }) {
+        let cartImageIds = state.cart.items.map(item => { return  item.id })
+        plainAxiosInstance.get('/photos', { params: { ids: cartImageIds }})
+        .then(response => {
+          let knownIds = state.images.map(image => image.id)
+          let unknownImages = response.data.images.filter(image => !knownIds.includes(image.id))
+          commit('setImages', [...state.images, ...unknownImages])
         })
         .catch(error => {
           state.errors.connectionError = error
