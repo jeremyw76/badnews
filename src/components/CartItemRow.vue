@@ -51,12 +51,7 @@ export default {
       if (image !== undefined) {
         return image
       } else {
-        return {
-          description: 'Photo not found.',
-          price: 0,
-          quantity: 0,
-          url: 'https://bulma.io/images/placeholders/128x128.png'
-        }
+        this.$store.dispatch('retrieveCartImages')
       }
     },
     unitPrice () {

@@ -11,49 +11,52 @@ const postToCartUpdate = (state, errorHandler) => {
       .catch(error => errorHandler(error))
 }
 
+const initialState = () => { return {
+  showSingleImageModal: false,
+  modalImage: null,
+  loggedIn: false,
+  user: {
+    name: null,
+    paymentTokens: [],
+    addresses: [],
+  },
+  currentAddress: {
+    address1: undefined,
+    address2: undefined,
+    city: undefined,
+    province: undefined,
+    country: undefined,
+    postalCode: undefined
+  },
+  cart: {
+    items: []
+  },
+  pagination: {
+    pages: 1,
+    per_page: 10,
+    current_page: 1
+  },
+  previousPage: '/',
+  images: [],
+  count: 0,
+  errors: {
+    customerDataError: undefined,
+    orderProcessError: undefined,
+    connectionError: undefined
+  },
+  provinces: [],
+  taxes: {
+    canCalculateTaxes: false,
+    provinceId: undefined,
+    rate: 0
+  },
+  shouldSaveAddress: true,
+  tags: []
+}}
+
 export default {
   store: new Vuex.Store({
-    state: {
-      showSingleImageModal: false,
-      modalImage: null,
-      loggedIn: false,
-      user: {
-        name: null,
-        paymentTokens: [],
-        addresses: [],
-      },
-      currentAddress: {
-        address1: undefined,
-        address2: undefined,
-        city: undefined,
-        province: undefined,
-        country: undefined,
-        postalCode: undefined
-      },
-      cart: {
-        items: []
-      },
-      pagination: {
-        pages: 1,
-        per_page: 10,
-        current_page: 1
-      },
-      previousPage: '/',
-      images: [],
-      page: 0,
-      count: 0,
-      errors: {
-        customerDataError: undefined,
-        orderProcessError: undefined
-      },
-      provinces: [],
-      taxes: {
-        canCalculateTaxes: false,
-        provinceId: undefined,
-        rate: 0
-      },
-      shouldSaveAddress: true
-    },
+    state: {},
     getters: {
       currentProvince: state => {
         return state.provinces.find(province => province.name === state.currentAddress.province)
@@ -122,6 +125,9 @@ export default {
         state.taxes.provinceId = payload.provinceId
         state.taxes.canCalculateTaxes = payload.validProvince
         state.taxes.rate = state.provinces.find(province => province.id == payload.provinceId).tax_rate
+      },
+      clearStore (state) {
+        this.replaceState(initialState())
       },
       clearTaxData (state) {
         state.taxes.canCalculateTaxes = false

@@ -15,10 +15,10 @@ import SignupSuccess from '@/components/SignupSuccess'
 
 export default {
   components: {
-      Navbar,
-      SignupSuccess
-    }
+    Navbar,
+    SignupSuccess
   }
+}
 </script>
 
 <style scoped>

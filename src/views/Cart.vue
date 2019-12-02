@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar :categories="categories"></Navbar>
+    <Navbar></Navbar>
     <CartForm></CartForm>
   </div>
 </template>

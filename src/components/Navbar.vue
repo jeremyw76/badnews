@@ -85,6 +85,9 @@
 </template>
 
 <script>
+import 'es6-promise/auto'
+import { store } from 'vuex'
+
 export default {
   data () {
     return {

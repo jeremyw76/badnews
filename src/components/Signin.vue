@@ -48,19 +48,17 @@ export default {
   methods: {
     signin () {
       this.error = ''
-      this.$http.plain.post('/users/sign_in.json', { user: { email: this.email, password: this.password, remember_me: 1 }})
+      this.$http.plain.post('/sessions/login.json', { user_name: this.email, password: this.password })
         .then(response => this.signinSuccessful(response))
         .catch(error => this.signinFailed(error))
     },
     signinSuccessful (response) {
-      if (!response.data.csrf_token) {
-        this.signinFailed(response)
-        return
+      if (!response.data.success) {
+        return this.signinFailed(response)
       }
-      console.log(response.data)
 
       let user = {
-        name: response.data.customer.name
+        name: response.data.session.customer.name
       }
 
       this.$store.commit('logInUser', user)
@@ -69,7 +67,7 @@ export default {
       this.$router.replace(this.$store.state.previousPage)
     },
     signinFailed (error) {
-      this.error = (error.response && error.response.data && error.response.data.error) || ''
+      this.error = (error.response && error.response.data && error.response.data.error) || 'Unable to authenticate.'
       this.$store.commit('logOutUser')
     }
   }

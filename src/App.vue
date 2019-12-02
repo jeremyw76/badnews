@@ -8,6 +8,7 @@
 export default {
   name: 'App',
   created () {
+    this.$store.commit('clearStore')
     this.$store.dispatch('loadInitialData')
   }
 }

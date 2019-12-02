@@ -15,10 +15,10 @@ import Register from '@/components/Register'
 
 export default {
   components: {
-      Navbar,
-      Register
-    }
+    Navbar,
+    Register
   }
+}
 </script>
 
 <style scoped>

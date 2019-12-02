@@ -1,9 +1,21 @@
 <template>
   <form class="card black" @submit.prevent="signup">
     <div class="field is-horizontal">
+      <label class="field-label" for="firstName">First name</label>
+      <div class="control">
+        <input class="input" id="firstName" v-model="firstName">
+      </div>
+    </div>
+    <div class="field is-horizontal">
+      <label class="field-label" for="lastName">Last name</label>
+      <div class="control">
+        <input class="input" id="lastName" v-model="lastName">
+      </div>
+    </div>
+    <div class="field is-horizontal">
       <label class="field-label" for="email">Email</label>
       <div class="control has-icons-left has-icons-right">
-        <input class="input" type="email" id="email" v-model="email" placeholder="Email input">
+        <input class="input" type="email" id="email" v-model="email" placeholder="Email address">
         <span class="icon is-small is-left">
           <font-awesome-icon :icon="['fas', 'envelope']"></font-awesome-icon>
         </span>
@@ -55,6 +67,8 @@ export default {
   name: 'Register',
   data () {
     return {
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -68,6 +82,8 @@ export default {
   methods: {
     signup () {
       this.$http.plain.post('/users.json', { user: {
+        firstName: this.firstName,
+        lastName: this.lastName,
         email: this.email,
         password: this.password,
         password_confirmation: this.confirmPassword
