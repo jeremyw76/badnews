@@ -50,6 +50,7 @@ const initialState = () => { return {
     provinceId: undefined,
     rate: 0
   },
+  selectedCategory: undefined,
   shouldSaveAddress: true,
   tags: []
 }}
@@ -158,6 +159,10 @@ export default {
           this.dispatch('loadImages')
         }
       },
+      setCategory(state, categoryId)
+      {
+        state.selectedCategory = state.tags.find(category => category.id == categoryId)
+      },
       stripeSuccess (response) {
         console.log('Stripe Success!!')
       },
@@ -187,19 +192,19 @@ export default {
                 commit('addToCart', item)
               })
             }
-            if (response.data.pagination) {
+            if (response.data.pagination !== undefined) {
               this.state.pagination.per_page = response.data.pagination.per_page
               this.state.pagination.pages = response.data.pagination.pages
-              this.state.pagination.page = 2
+              this.state.pagination.page = response.data.pagination.page
             }
 
-            let tags = response.data.tags
-            if (tags !== undefined) {
+            let categories = response.data.categories
+            if (categories !== undefined) {
               this.state.tags = []
 
-              tags.forEach(tag => {
+              categories.forEach(tag => {
                 this.state.tags.push(tag)
-              }
+              })
             }
 
 
@@ -224,22 +229,23 @@ export default {
           })
       },
       loadImages({ commit, state }) {
+        let categoryId = state.selectedCategory !== undefined ? state.selectedCategory.id : null
         plainAxiosInstance.get('/photos', {
           params: {
             page: state.pagination.current_page,
-            per_page: state.pagination.per_page
+            per_page: state.pagination.per_page,
+            category: categoryId
           }
         })
         .then(response => {
-          let knownIds = state.images.map(image => image.id)
-          let unknownImages = response.data.images.filter(image => !knownIds.includes(image.id))
           commit('setImages', response.data.images)
           state.pagination.current_page = response.data.page
           state.pagination.per_page = response.data.per_page
-          state.pagination.pages = response.date.pages
+          state.pagination.pages = response.data.pages
         })
         .catch(error => {
           state.errors.connectionError = error
+          throw error
         })
       },
       retrieveCartImages({ commit, state }) {

@@ -50,7 +50,7 @@ export default {
     },
     isNotNearEnd() {
       let pagination = this.$store.state.pagination
-      return pagination.pages - pagination.current_page > 1
+      return pagination.pages - pagination.current_page > 3
     },
     isNotFirstPage() {
       return this.$store.state.pagination.current_page > 1

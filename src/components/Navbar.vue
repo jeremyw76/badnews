@@ -25,7 +25,7 @@
             </a>
 
             <div class="navbar-dropdown">
-              <a v-for="category in categories" v-bind:key="category.id" class="navbar-item">
+              <a v-for="category in categories" v-bind:key="category.id" class="navbar-item" @click="setCategory(category.id)">
                 {{category.name}}
               </a>
             </div>
@@ -90,6 +90,8 @@ export default {
       this.$router.push('/signup')
     },
     redirectToImages () {
+      this.$store.commit('setCategory', undefined)
+      this.$store.dispatch('loadImages')
       this.$router.push('/photos')
     },
     logUserOut () {
@@ -100,6 +102,11 @@ export default {
     },
     loadCheckout () {
       this.$router.push('/checkout')
+    },
+    setCategory (categoryId) {
+      this.$store.commit('setCategory', categoryId)
+      this.$store.dispatch('loadImages')
+      this.$router.push('/photos')
     },
     viewCart () {
       this.$router.push('/cart')
