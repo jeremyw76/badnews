@@ -193,6 +193,16 @@ export default {
               this.state.pagination.page = 2
             }
 
+            let tags = response.data.tags
+            if (tags !== undefined) {
+              this.state.tags = []
+
+              tags.forEach(tag => {
+                this.state.tags.push(tag)
+              }
+            }
+
+
             let session = response.data.session
             if (session === undefined) return
 
@@ -264,7 +274,7 @@ export default {
           saveAddress: state.shouldSaveAddress
         }
 
-        securedAxiosInstance.post('/payments/create.json')
+        securedAxiosInstance.post('/payments/create.json', orderPayload)
           .then(response => {
             Stripe.sessionId = response.data.sessionId
             Stripe.sendToCheckout(commit.stripeSuccess, commit.stripeError)
