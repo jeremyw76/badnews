@@ -51,6 +51,8 @@ const initialState = () => { return {
     rate: 0
   },
   selectedCategory: undefined,
+  selectedSearchCategoryId: undefined,
+  searchText: undefined,
   shouldSaveAddress: true,
   tags: []
 }}
@@ -163,6 +165,14 @@ export default {
       {
         state.selectedCategory = state.tags.find(category => category.id == categoryId)
       },
+      setSelectedSearchCategoryId(state, categoryId)
+      {
+        state.selectedSearchCategoryId = categoryId
+      },
+      setSearchText(state, text)
+      {
+        state.searchText = text
+      },
       stripeSuccess (response) {
         console.log('Stripe Success!!')
       },
@@ -200,7 +210,7 @@ export default {
 
             let categories = response.data.categories
             if (categories !== undefined) {
-              this.state.tags = []
+              this.state.tags = [{id: undefined, name: 'All'}]
 
               categories.forEach(tag => {
                 this.state.tags.push(tag)
@@ -234,7 +244,8 @@ export default {
           params: {
             page: state.pagination.current_page,
             per_page: state.pagination.per_page,
-            category: categoryId
+            category: categoryId,
+            searchText: state.searchText
           }
         })
         .then(response => {
